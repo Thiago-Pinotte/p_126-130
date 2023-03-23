@@ -1,5 +1,5 @@
-song1 = ""
-song2 = ""
+song1 = "";
+song2 = "";
 song1_status = "";
 song2_status = "";
 scoreRightWrist = 0;
@@ -10,8 +10,8 @@ leftWristX = 0;
 leftWristY = 0;
 
 function preload() {
-    song1 = loadSound("music.mp3")
-    song2 = loadSound("music2.mp3")
+    song1 = loadSound("music.mp3");
+    song2 = loadSound("music2.mp3");
 }
 
 function setup() {
@@ -20,6 +20,28 @@ function setup() {
 
     video = createCapture(VIDEO);
     video.hide()
+    poseNet = ml5.poseNet(video, modelLoaded);
+    poseNet.on("pose", gotPoses);
+}
+
+function modelLoaded() {
+   console.log("modelo inicializado"); 
+}
+
+function gotPoses(results) {
+   if (results.lenght>0) {
+    console.log(results);
+    scoreRightWrist = results[0].pose.keypoints[10].score;
+    scoreLeftWrist = results[0].pose.keypoints[9].score;
+    console.log("scoreRightWrist = "+ scoreRightWrist +"scoreLeftWrist = " + scoreLeftWrist)
+    rightWristX = results[0].pose.rightWrist.x;
+    rightWristY = results[0].pose.rightWrist.y;
+    console.log("rightWristX = " + rightWristX +" rightWristY = "+ rightWristY);
+
+    leftWristX = results[0].pose.leftWrist.x;
+    leftWristY = results[0].pose.leftWrist.y;
+    console.log("leftWristX = " + leftWristX +"leftWristY = "+leftWristY);
+   } 
 }
 
 function draw() {
@@ -28,4 +50,6 @@ function draw() {
 
 function play() {
     song.play();
+    song.setVolume(1);
+    song.rate(1);   
 }
